@@ -65,6 +65,23 @@ CAN USE **GITHUB CODESPACE** OR **GOOGLE CLOUD VM + SSH ACCESS**
 
 ## 1.2.2 - Ingesting NY Taxi Data to Postgres
 
+1. PostgreSQL is an object relational database management system (ORDBMS) with SQL capability. To run postgres we use the official docker image ```postgres:17```. Eventually we will use docker compose, but for the first example, we will use the command line.
+
+- Make sure theres no space following the backslash
+```
+docker run -it \
+  -e POSTGRES_USER="root" \
+  -e POSTGRES_PASSWORD="root" \
+  -e POSTGRES_DB="ny_taxi" \
+  -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  --name pgdatabase
+  postgres:17-alpine
+```
+- ```-e``` environment variables to configure the postgres
+- ```-p``` [host port]:[container port] mapping the host port to the container port
+- ```-v``` [path to host folder]:[path to container folder]
+
 
 
 

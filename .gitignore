@@ -1,0 +1,14 @@
+# Ignore specific directory
+Week1/ny_taxi_postgres_data/
+
+# Ignore all `.log` files
+*.log
+
+# Ignore all `.tmp` files in any directory
+**/*.tmp
+
+# Ignore a file
+debug.txt
+
+# Ignore node_modules folder
+node_modules/
