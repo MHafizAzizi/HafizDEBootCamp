@@ -66,7 +66,7 @@ CAN USE **GITHUB CODESPACE** OR **GOOGLE CLOUD VM + SSH ACCESS**
 ## 1.2.2 - Ingesting NY Taxi Data to Postgres
 
 1. PostgreSQL is an object relational database management system (ORDBMS) with SQL capability. To run postgres we use the official docker image ```postgres:17```. Eventually we will use docker compose, but for the first example, we will use the command line.
-
+- We will setting up a Postgres container
 - Make sure theres no space following the backslash
 ```
 docker run -it \
@@ -75,13 +75,24 @@ docker run -it \
   -e POSTGRES_DB="ny_taxi" \
   -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
   -p 5432:5432 \
-  --name pgdatabase
+  --name pgdatabase \
   postgres:17-alpine
 ```
+- ```docker volume create vol-pgdata``` if having problem
 - ```-e``` environment variables to configure the postgres
 - ```-p``` [host port]:[container port] mapping the host port to the container port
 - ```-v``` [path to host folder]:[path to container folder]
 
+2. Connect to Postgres with PGCLI
+
+- ```pip install pgcli```
+```pgcli -h localhost -p 5432 -u root -d ny_taxi```
+- ```-h``` host ```-p``` port ```-u``` user ```-d``` database
+- when prompt with a password, use the password from the postgres container that we just setting up
+
+3. Load Data to Postgres Using Jupyter
+```pip install alchemy psycopg2```
+```engine = create_engine('postgresql://root:root@localhost:5432/ny_taxi')```
 
 
 
