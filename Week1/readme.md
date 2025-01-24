@@ -139,12 +139,32 @@ docker run -it \
     -p 8080:80 \
     --network=pg-network
     --name pgadmin \
-dpage/pgadmin4
+    dpage/pgadmin4
 ```
+
+```docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data -p 5432:5432 --network=pg-network --name pgdatabase postgres:17-alpine```
+
+```docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -p 8080:80 --network=pg-network --name pgadmin dpage/pgadmin4```
+
 
 ```8080:80``` - host machine port for the PGAdmin
 ```--network=pg-network``` - network that connects the 2 containers
 ```--name pgdatabase``` define name for the postgres where itll be identified by the PGAdmin and connect to the DB
+
+## 1.2.4 - Dockerizing the Ingestion Script
+
+```
+url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz'
+
+python ingest_data.py \
+  --user =root \
+  --password =root \ 
+  --host =localhost \
+  --port =5432\
+  --db =ny_taxi\
+  --table_name =yellow_taxi\ 
+  --url =${url}
+```
 
 
 
