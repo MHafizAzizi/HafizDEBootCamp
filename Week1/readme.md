@@ -91,10 +91,60 @@ docker run -it \
 - when prompt with a password, use the password from the postgres container that we just setting up
 
 3. Load Data to Postgres Using Jupyter
-```pip install alchemy psycopg2```
-```engine = create_engine('postgresql://root:root@localhost:5432/ny_taxi')```
+### REMEMBER TO RESTART THE CONTAINER IF YOUVE EVER STOPPED AT ONE POINT
+### pgcli -h localhost -p 5432 -u root -d ny_taxi (to open back the postgres in terminal)
+```python
+pip install alchemy psycopg2
+from sqlalchemy import create_engine
+engine = create_engine('postgresql://root:root@localhost:5432/ny_taxi')
+engine.connect()
+print(pd.io.sql.get_schema(df, name='yellow_taxi_data'))
+df_iter = pd.read_csv(url,iterator = True, chunksize= 100000)
+df = next(df_iter)
+df.to_sql(name='yellow_taxi_data', con=engine, if_exists = 'append')
 
+FINAL
 
+from time import time
+
+while True:
+    t_start = time()
+    df = next(df_iter)
+    df.tpep_pickup_datetime = pd.to_datetime(df.tpep_pickup_datetime)
+    df.tpep_dropoff_datetime = pd.to_datetime(df.tpep_dropoff_datetime)
+    df.to_sql(name='yellow_taxi_data', con=engine, if_exists = 'append')
+    t_end = time()
+    print('inserted another chunk, took %.3f s' % (t_end - t_start))
+```
+
+## 1.2.3 - Connecting pgAdmin and Postgres
+- Docker Network is basically connecting 2 different containers together in a
+```docker 
+#Opening a PGAdmin on network
+docker network create pg-network
+
+docker run -it \
+  -e POSTGRES_USER="root" \
+  -e POSTGRES_PASSWORD="root" \
+  -e POSTGRES_DB="ny_taxi" \
+  -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data \
+  -p 5432:5432 \
+  --network=pg-network \
+  --name pgdatabase \
+  postgres:17-alpine
+
+docker run -it \
+    -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" \
+    -e PGADMIN_DEFAULT_PASSWORD="root" \
+    -p 8080:80 \
+    --network=pg-network
+    --name pgadmin \
+dpage/pgadmin4
+```
+
+```8080:80``` - host machine port for the PGAdmin
+```--network=pg-network``` - network that connects the 2 containers
+```--name pgdatabase``` define name for the postgres where itll be identified by the PGAdmin and connect to the DB
 
 
 
