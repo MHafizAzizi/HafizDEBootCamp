@@ -68,7 +68,8 @@ CAN USE **GITHUB CODESPACE** OR **GOOGLE CLOUD VM + SSH ACCESS**
 1. PostgreSQL is an object relational database management system (ORDBMS) with SQL capability. To run postgres we use the official docker image ```postgres:17```. Eventually we will use docker compose, but for the first example, we will use the command line.
 - We will setting up a Postgres container
 - Make sure theres no space following the backslash
-```
+
+```docker
 docker run -it \
   -e POSTGRES_USER="root" \
   -e POSTGRES_PASSWORD="root" \
@@ -78,6 +79,7 @@ docker run -it \
   --name pgdatabase \
   postgres:17-alpine
 ```
+
 - ```docker volume create vol-pgdata``` if having problem
 - ```-e``` environment variables to configure the postgres
 - ```-p``` [host port]:[container port] mapping the host port to the container port
@@ -93,6 +95,7 @@ docker run -it \
 3. Load Data to Postgres Using Jupyter
 ### REMEMBER TO RESTART THE CONTAINER IF YOUVE EVER STOPPED AT ONE POINT
 ### pgcli -h localhost -p 5432 -u root -d ny_taxi (to open back the postgres in terminal)
+
 ```python
 pip install alchemy psycopg2
 from sqlalchemy import create_engine
@@ -142,9 +145,13 @@ docker run -it \
     dpage/pgadmin4
 ```
 
-```docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data -p 5432:5432 --network=pg-network --name pgdatabase postgres:17-alpine```
+```bash
+docker run -it -e POSTGRES_USER="root" -e POSTGRES_PASSWORD="root" -e POSTGRES_DB="ny_taxi" -v $(pwd)/ny_taxi_postgres_data:/var/lib/postgresql/data -p 5432:5432 --network=pg-network --name pgdatabase postgres:17-alpine
+```
 
-```docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -p 8080:80 --network=pg-network --name pgadmin dpage/pgadmin4```
+```bash
+docker run -it -e PGADMIN_DEFAULT_EMAIL="admin@admin.com" -e PGADMIN_DEFAULT_PASSWORD="root" -p 8080:80 --network=pg-network --name pgadmin dpage/pgadmin4
+```
 
 
 ```8080:80``` - host machine port for the PGAdmin
@@ -153,7 +160,7 @@ docker run -it \
 
 ## 1.2.4 - Dockerizing the Ingestion Script
 
-```
+```bash
 url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz'
 
 python ingest_data.py \
@@ -165,9 +172,67 @@ python ingest_data.py \
   --table_name =yellow_taxi\ 
   --url =${url}
 ```
+- Update the dockerfile
 
+```dockerfile
+FROM python:3.9
 
+RUN apt-get install weget
+RUN pip install pandas sqlalchemy psycopg2
 
+WORKDIR /app
+COPY ingest_data.py ingest_data.py
+
+ENTRYPOINT [ "python", "ingest_data.py" ]
+```
+
+```docker build -t taxi_ingest:v001 .```
+
+```docker
+docker run taxi_ingest:v001 \
+  --user =root \
+  --password =root \ 
+  --host =localhost \
+  --port =5432\
+  --db =ny_taxi\
+  --table_name =yellow_taxi\ 
+  --url =${url}
+
+docker run taxi_ingest:v001 --user=root --password=root --host=localhost --port=5432 --db=ny_taxi --table_name=yellow_taxi --url=https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz
+
+```
+## 1.2.5 - Running Postgres and pgAdmin with Docker-Compose
+
+- Docker Compose - tool for defining & running multi-container Docker applications
+- Create every containers that we need (postgres, pgAdmin and docker network) with one command using a YAML file for Docker Compose
+- Containers inside the YAML are all created in the same network, thus dont need to define it
+- Each container is defined as a service in the file and the name of the service is also the name you can access the server with.
+
+- Install the Docker Compose
+    - ```docker-compose```
+    - create a ```docker-compose.yaml```
+    ```docker
+        services:
+            pgdatabase:
+                image: postgres:17-alpine
+                environment:
+                - POSTGRES_USER=root 
+                - POSTGRES_PASSWORD=root 
+                - POSTGRES_DB=ny_taxi 
+                volumes:
+                - ${PWD}/ny_taxi_postgres_data:/var/lib/postgresql/data
+                ports:
+                - "5432:5432"
+            pgadmin:
+                image: dpage/pgadmin4
+                environment:
+                - PGADMIN_DEFAULT_EMAIL=admin@admin.com 
+                - PGADMIN_DEFAULT_PASSWORD=root 
+                ports:
+                - "8080:80"
+    ```
+    - ```docker-compose up``` - to start Docker Compose
+    - ```docker-compose down``` - to stop the Docker Compose
 
 
 
