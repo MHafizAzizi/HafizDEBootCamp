@@ -57,5 +57,37 @@
     - ```Add Key``` > ```Create New Key``` > ```JSON Key```
     - The key will be saved to your computer
     - **PLEASE TAKE NOTE YOUR JSON KEY, CAN DELETE AND RECREATE ANYTIME**
+- Adding the key into the environment variable
+	- ```export GOOGLE_CREDENTIALS="path_to_file/file.json"```
+
+**Terraform Main. Tf**
+- ```main.tf``` is a Terraform config files thatll let us config the settings and providers that we need, which in this case is GCP
+- [Hashicorp Google Cloud Provider](https://registry.terraform.io/providers/hashicorp/google/latest/docs)
+- Copy the ```Use Provider``` inside the ```tf```
+
+```
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "5.11.0"
+    }
+  }
+}
+
+provider "google" {
+  # Configure your project & region here
+	project = 'project_id'
+	region = 'region'
+}
+```
+
+**Initialise the Project**
+```terraform init``` - this initialise a working directory containing the config files & install plugins for the required providers, Google provider in this case, which is a code that connect to the GCP
+
+```.terraform folder``` - contain subcategories & files related to the initialisation & plug in management
+```.terraform.lock.hcl folder``` - lock file that records a list of provider plugins & their version as hashes
+
+
 
 
