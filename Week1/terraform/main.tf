@@ -9,13 +9,13 @@ terraform {
 
 provider "google" {
   # Configure your project & region here
-	project = "dezoom-449006"
-	region = "us-central1"
+	project = var.project
+	region = var.region
 }
 
 resource "google_storage_bucket" "demo-bucket" {
-  name          = "terraform-demo-dezoom-449006"
-  location      = "US"
+  name          = var.gcs_bucket_name
+  location      = var.location
   force_destroy = true
 
   lifecycle_rule {
@@ -28,7 +28,7 @@ resource "google_storage_bucket" "demo-bucket" {
   }
 }
 
-# resource "google_bigquery_dataset" "demo-dataset" {
-#   dataset_id = "demo-dataset-dezoom-449006"
-#   location   = "US"
-# }
+resource "google_bigquery_dataset" "demo-dataset" {
+  dataset_id = var.bq_dataset_name
+  location = var.location
+}

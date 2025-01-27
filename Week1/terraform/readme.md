@@ -183,3 +183,79 @@ resource "google_bigquery_dataset" "demo-dataset" {
 ```terraform destroy``` views the ```terraform.tfstate``` and check changes to made to delete the resources.
 - ```terraform.tfstate.backup``` updated with the current state before the change.
 - ```terraform.tfstate``` updated with the state after the change.
+
+## 1.3.3 Terraform Variables
+
+```variable.tf``` can be used to define variable & then reference in the ```main.tf```
+
+```terraform
+
+variable "project" {
+    description = "Project"
+    default = "dezoom-449006"
+}
+
+variable "region" {
+    description = "Project Region"
+    default = "us-central1"
+}
+
+variable "location" {
+    description = "Project Location"
+    default = "US"
+}
+
+variable "bq_dataset_name" {
+    description = "BigQuery dataset name"
+    default = "demo_dataset_dezoom_449006"
+}
+
+variable "gcs_bucket_name" {
+    description = "My Storage Bucket Name"
+    default = "terraform-demo-dezoom-449006"
+}
+
+variable "gcs_storage_class" {
+    description = "Bucket Storage Class"
+    default = "STANDARD"
+}
+
+```
+
+**main. tf used with variables. tf**
+
+```terraform
+terraform {
+  required_providers {
+    google = {
+      source = "hashicorp/google"
+      version = "6.17.0"
+    }
+  }
+}
+
+provider "google" {
+	project = var.project
+	region = var.region
+}
+
+resource "google_storage_bucket" "demo-bucket" {
+  name          = var.gcs_bucket_name
+  location      = var.location
+  force_destroy = true
+
+  lifecycle_rule {
+    condition {
+      age = 1 #day
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
+}
+
+resource "google_bigquery_dataset" "demo-dataset" {
+  dataset_id = var.bq_dataset_name
+  location = var.location
+}
+```
