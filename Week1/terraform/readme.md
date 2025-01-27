@@ -93,6 +93,7 @@ provider "google" {
 **Resources**
 - [Google Cloud Storage Bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket.html)
 - [BigQuery](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/bigquery_dataset)
+- [Terraform GitIgnore](https://github.com/github/gitignore/blob/main/Terraform.gitignore) - will exclude some files to be uploaded into github
 
 
 **Cloud Storage Bucket**
@@ -124,10 +125,11 @@ resource "google_bigquery_dataset" "demo-dataset" {
   location   = "US"
 }
 ```
-**Terraform Apply**
-```terraform apply``` 
+**Terraform Plan**
 
-```
+```terraform plan``` will display the actions that will be taken based from the ```main.tf``` that we just configured 
+
+```terraform
   # google_storage_bucket.demo-bucket will be created
   + resource "google_storage_bucket" "demo-bucket" {
       + effective_labels            = {
@@ -171,3 +173,13 @@ resource "google_bigquery_dataset" "demo-dataset" {
       + website (known after apply)
     }
 ```
+
+**Terraform Apply**
+
+```terraform apply``` runs the action configured in the ```main.tf```, create a bucket to the Cloud Storage, while creating a ```terraform.tfstate```, which tracks of resources created from the config.
+
+**Terraform Destroy**
+
+```terraform destroy``` views the ```terraform.tfstate``` and check changes to made to delete the resources.
+- ```terraform.tfstate.backup``` updated with the current state before the change.
+- ```terraform.tfstate``` updated with the state after the change.
