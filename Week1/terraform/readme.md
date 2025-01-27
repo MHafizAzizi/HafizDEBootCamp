@@ -35,7 +35,7 @@
 
 **Prerequisite**
   - GCP Account
-  - Terraform
+  - [Terraform](https://developer.hashicorp.com/terraform/install)
 
 
 **GCP Account**
@@ -59,6 +59,7 @@
     - **PLEASE TAKE NOTE YOUR JSON KEY, CAN DELETE AND RECREATE ANYTIME**
 - Adding the key into the environment variable
 	- ```export GOOGLE_CREDENTIALS="path_to_file/file.json"```
+  - ```echo $GOOGLE_CREDENTIALS``` to verify the key
 
 **Terraform Main. Tf**
 - ```main.tf``` is a Terraform config files thatll let us config the settings and providers that we need, which in this case is GCP
@@ -86,8 +87,87 @@ provider "google" {
 ```terraform init``` - this initialise a working directory containing the config files & install plugins for the required providers, Google provider in this case, which is a code that connect to the GCP
 
 ```.terraform folder``` - contain subcategories & files related to the initialisation & plug in management
+
 ```.terraform.lock.hcl folder``` - lock file that records a list of provider plugins & their version as hashes
 
+**Resources**
+- [Google Cloud Storage Bucket](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket.html)
+- [BigQuery](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/bigquery_dataset)
 
 
+**Cloud Storage Bucket**
+```terraform
+resource "google_storage_bucket" "demo-bucket" {
+  name          = "terraform-demo-dezoom-449006"
+  location      = "US"
+  force_destroy = true
 
+  lifecycle_rule {
+    condition {
+      age = 1 #day
+    }
+    action {
+      type = "AbortIncompleteMultipartUpload"
+    }
+  }
+}
+```
+```resource``` - (resources) (variable name)
+```name``` - globally unique name. Can use a name variation of the bucket
+```age``` - day
+
+**BigQuery Dataset**
+
+```terraform
+resource "google_bigquery_dataset" "demo-dataset" {
+  dataset_id = "demo-dataset-dezoom-449006"
+  location   = "US"
+}
+```
+**Terraform Apply**
+```terraform apply``` 
+
+```
+  # google_storage_bucket.demo-bucket will be created
+  + resource "google_storage_bucket" "demo-bucket" {
+      + effective_labels            = {
+          + "goog-terraform-provisioned" = "true"
+        }
+      + force_destroy               = true
+      + id                          = (known after apply)
+      + location                    = "US"
+      + name                        = "terraform-demo-dezoom-449006"
+      + project                     = (known after apply)
+      + project_number              = (known after apply)
+      + public_access_prevention    = (known after apply)
+      + rpo                         = (known after apply)
+      + self_link                   = (known after apply)
+      + storage_class               = "STANDARD"
+      + terraform_labels            = {
+          + "goog-terraform-provisioned" = "true"
+        }
+      + uniform_bucket_level_access = (known after apply)
+      + url                         = (known after apply)
+
+      + lifecycle_rule {
+          + action {
+              + type          = "AbortIncompleteMultipartUpload"
+                # (1 unchanged attribute hidden)
+            }
+          + condition {
+              + age                    = 1
+              + matches_prefix         = []
+              + matches_storage_class  = []
+              + matches_suffix         = []
+              + with_state             = (known after apply)
+                # (3 unchanged attributes hidden)
+            }
+        }
+
+      + soft_delete_policy (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+```
