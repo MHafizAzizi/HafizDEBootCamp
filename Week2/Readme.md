@@ -13,7 +13,8 @@ Kestra
 - Can be written in any programming language, versatility
 - Monitoring all workflow & Executions
 
-## [2.2.1.1 Getting Started with Kestra](https://www.youtube.com/watch?v=a2BZ7vOihjg)
+## 2.2.2 - Learn Kestra
+### [2.2.2.1 Getting Started with Kestra](https://www.youtube.com/watch?v=a2BZ7vOihjg)
 
 - Workflow known as Flows in Kestra
 - Declared in YAML
@@ -45,9 +46,34 @@ triggers:
       type: io.kestra.core.models.triggers.types.Schedule
       cron: 0 * * *
 ```
+### 2.2.2.2 Learn the Fundamentals of Kestra
 
+```kestra
 
-## 2.2.2 - Learn Kestra
+id: getting_started_video
+namespace: dev
+
+tasks:
+  - id:hello_world
+    type: io.kestra.core.tasks.log.Log
+    message: Hello World!
+```
+3 Main Properties 
+```id``` - unique identifier for the flow
+```namespace``` - environment for the tasks to run in
+```tasks``` - actions itll take place, had its own identifier
+  - ```id```
+  - ```type```
+  - ```message```
+  - ```description```
+
+Other Properties
+
+```description```
+```labels```
+  - ```owner```
+  - ```project```
+
 
 
 
