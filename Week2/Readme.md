@@ -14,7 +14,14 @@ Kestra
 - Monitoring all workflow & Executions
 
 ## 2.2.2 - Learn Kestra
+
 ### [2.2.2.1 Getting Started with Kestra](https://www.youtube.com/watch?v=a2BZ7vOihjg)
+
+Running Kestra Using Docker
+
+```docker
+docker run --pull=always --rm -it -p 8080:8080 --user=root -v /var/run/docker.sock:/var/run/docker.sock -v /tmp:/tmp kestra/kestra:latest server local
+```
 
 - Workflow known as Flows in Kestra
 - Declared in YAML
@@ -75,8 +82,24 @@ Other Properties
   - ```project```
 
 
+### 2.2.2.3 Pass Data Into Your Workflows with Inputs
 
+- with using input, can simplify the workflow
 
+```kestra
+inputs:
+  - id:user
+    type: STRING
+    defaults: Hafiz
+
+tasks:
+  - id:hello
+    type: io.kestra.core.tasks.log.Log
+    message: Hello there, {{ inputs.user }}
+```
+- when executed, itll ask for the user name, which indicated from the ```inputs``` and ```id:user```
+
+### 2.2.2.4 Pass Data Between Tasks with Outputs
 
 ## 2.2.3 - ETL Pipelines with Postgres in Kestra
 ## 2.2.4 - Manage Scheduling and Backfills with Postgres in Kestra
