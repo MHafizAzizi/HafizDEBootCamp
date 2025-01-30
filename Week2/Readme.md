@@ -55,6 +55,11 @@ triggers:
       type: io.kestra.core.models.triggers.types.Schedule
       cron: 0 * * *
 ```
+**Installing Kestra with Docker Compose**
+
+https://kestra.io/docs/installation/docker-compose
+
+
 ### 2.2.2.2 Learn the Fundamentals of Kestra
 
 ```kestra
