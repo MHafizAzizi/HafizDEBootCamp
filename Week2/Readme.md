@@ -169,7 +169,26 @@ tasks:
 
 ## 2.2.4 - Manage Scheduling and Backfills with Postgres in Kestra
 ## 2.2.5 - Orchestrate dbt Models with Postgres in Kestra
+
+- Using dbt with Kestra for data transforming after extracting
+- More details on dbt in week 4
+- Quick glimpse on how cbt works in Kestra
+
+
 ## 2.2.6 - ETL Pipelines in Kestra Google Cloud Platform - Kestra
+
+- Take the existing ETL pipeline & move to GCS & BigQuery
+- 06_gcp_taxi.yaml
+- in the current pipeline, extract data from csv file, instead of adding into postgres, we're upload csv into datalake or GCS
+- simple store the data in the cloud to be ready to use
+- afterward, use BigQuery automatically use the csv file & create table from it 
+- then can start the processing data and start the queries 
+- Requirement for the GCP BigQuery:
+  - Service Account
+  - GCP Project Id
+  - GCP Location
+  - GCP Bucket Name 
+
 ## 2.2.7 - Manage Schedules and Backfills with BigQuery in Kestra
 ## 2.2.8 - Orchestrate dbt Models with BigQuery in Kestra
 ## 2.2.9 - Deploy Workflows to the Cloud with Git in Kestra
