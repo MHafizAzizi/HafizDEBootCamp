@@ -179,15 +179,85 @@ tasks:
 
 - Take the existing ETL pipeline & move to GCS & BigQuery
 - 06_gcp_taxi.yaml
-- in the current pipeline, extract data from csv file, instead of adding into postgres, we're upload csv into datalake or GCS
+- in the current pipeline, extract data from csv file, instead of adding into postgres, we're upload csv into datalake or in this case the GCS bucket
 - simple store the data in the cloud to be ready to use
 - afterward, use BigQuery automatically use the csv file & create table from it 
-- then can start the processing data and start the queries 
+- then can start the processing, cleaning data and start the queries 
 - Requirement for the GCP BigQuery:
   - Service Account
   - GCP Project Id
   - GCP Location
-  - GCP Bucket Name 
+  - GCP Bucket Name
+
+```yaml
+inputs:
+  - id: taxi
+    type: SELECT
+    displayName: Select taxi type
+    values: [yellow, green]
+    defaults: green
+
+  - id: year
+    type: SELECT
+    displayName: Select year
+    values: ["2019", "2020"]
+    defaults: "2019"
+    allowCustomValue: true # allows you to type 2021 from the UI for the homework 🤗
+
+  - id: month
+    type: SELECT
+    displayName: Select month
+    values: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+    defaults: "01"
+```
+```inputs``` - basic input that we want to get when executing the flow
+
+```yaml
+variables:
+  file: "{{inputs.taxi}}_tripdata_{{inputs.year}}-{{inputs.month}}.csv"
+  gcs_file: "gs://{{kv('GCP_BUCKET_NAME')}}/{{vars.file}}"
+  table: "{{kv('GCP_DATASET')}}.{{inputs.taxi}}_tripdata_{{inputs.year}}_{{inputs.month}}"
+  data: "{{outputs.extract.outputFiles[inputs.taxi ~ '_tripdata_' ~ inputs.year ~ '-' ~ inputs.month ~ '.csv']}}"
+```
+```variables``` - defining the variable of the flow
+
+- for the Task section, first we need to set label and extract the data that we want to get,
+
+```yaml
+tasks:
+  - id: set_label
+    type: io.kestra.plugin.core.execution.Labels
+    labels:
+      file: "{{render(vars.file)}}"
+      taxi: "{{inputs.taxi}}"
+
+  - id: extract
+    type: io.kestra.plugin.scripts.shell.Commands
+    outputFiles:
+      - "*.csv"
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - wget -qO- https://github.com/DataTalksClub/nyc-tlc-data/releases/download/{{inputs.taxi}}/{{render(vars.file)}}.gz | gunzip
+```
+- then upload to our Bucket storage
+
+```yaml
+tasks:
+  - id: upload_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.data)}}"
+    to: "{{render(vars.gcs_file)}}"
+```
+
+```yaml
+tasks:
+  - id: upload_to_gcs
+    type: io.kestra.plugin.gcp.gcs.Upload
+    from: "{{render(vars.data)}}"
+    to: "{{render(vars.gcs_file)}}"
+```
+
 
 ## 2.2.7 - Manage Schedules and Backfills with BigQuery in Kestra
 ## 2.2.8 - Orchestrate dbt Models with BigQuery in Kestra
