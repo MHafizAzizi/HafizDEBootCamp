@@ -349,8 +349,8 @@ tasks:
       )
       PARTITION BY DATE(lpep_pickup_datetime);
 ```
-```bq_green_tripdata``` - this task will help create a main table for the green taxi with correct schema & partitioning for the uploaded csv files
-- create a main table to merge all of the csv files together 
+```bq_green_tripdata``` - this task will help create a main table for the green taxi with correct schema & partitioning for the uploaded csv files and merge it all together
+ 
 
 ```yaml
 tasks:
@@ -388,8 +388,7 @@ tasks:
           ignore_unknown_values = TRUE
       );
 ```
-```bq_green_table_ext``` - is a staging table where it will store the csv files temporarily and then load from there into the main table
-- will have few properties compared to the main table, use the data from the csv file
+```bq_green_table_ext``` - is a staging table where it will store the csv files temporarily and then load from there into the main table and will have few properties compared to the main table
 
 ```yaml
 tasks:
@@ -411,7 +410,7 @@ tasks:
         *
       FROM `{{kv('GCP_PROJECT_ID')}}.{{render(vars.table)}}_ext`;
 ```
-```bq_green_table_tmp``` - will add unique values for the csv file before merging into the main table
+```bq_green_table_tmp``` - will add unique values for each of the csv file before merging into the main table
 
 ```yaml
   - id: bq_green_merge
@@ -425,16 +424,17 @@ tasks:
         INSERT (unique_row_id, filename, VendorID, lpep_pickup_datetime, lpep_dropoff_datetime, store_and_fwd_flag, RatecodeID, PULocationID, DOLocationID, passenger_count, trip_distance, fare_amount, extra, mta_tax, tip_amount, tolls_amount, ehail_fee, improvement_surcharge, total_amount, payment_type, trip_type, congestion_surcharge)
         VALUES (S.unique_row_id, S.filename, S.VendorID, S.lpep_pickup_datetime, S.lpep_dropoff_datetime, S.store_and_fwd_flag, S.RatecodeID, S.PULocationID, S.DOLocationID, S.passenger_count, S.trip_distance, S.fare_amount, S.extra, S.mta_tax, S.tip_amount, S.tolls_amount, S.ehail_fee, S.improvement_surcharge, S.total_amount, S.payment_type, S.trip_type, S.congestion_surcharge);
 ```
-```bq_green_merge``` - merge into the main table
+```bq_green_merge``` - the tasks will then merge into the main table
 
 - The same exact tasks will be run for the yellow taxi data
 
 ## 2.2.7 - Manage Schedules and Backfills with BigQuery in Kestra
 
-- Adding Schedules and Backfills for previous years
+- Adding schedules and backfills for previous years
 - ```06_gcp_taxi_scheduled.yaml```
 - only difference with ```06_gcp_taxi.yaml``` is that its added a trigger function, replacing input for this flow
 - trigger function means that itll basically run the flow automatically based on the time & date that we want
+- theres no need to execute the flow as it runs automatically
 
 ```yaml
 variables:
@@ -458,9 +458,12 @@ triggers: # added trigger function that will automatically start the workflow
     inputs:
       taxi: yellow
 ```
-
-
 ## 2.2.8 - Orchestrate dbt Models with BigQuery in Kestra
+
+- use dbt with bigquery to perform loads of transformation easily
+- ```07_gcp_dbt.yaml```
+- will be covered more in Week 4 - Analytics Engineering
+
 ## 2.2.9 - Deploy Workflows to the Cloud with Git in Kestra (Optional)
 
 - Learn how to deploy Kestra to cloud using GC & using git sync plugin to sync everything together
