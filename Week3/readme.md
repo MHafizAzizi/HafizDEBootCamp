@@ -45,13 +45,38 @@
 
 ![BQ Interface](/ss/w3/Screenshot%202025-02-09%20223759.png)
 
+- ```taxi_rides_ny``` is the project, ```nytaxi``` is the dataset, ```external_yellow_tripdata``` is the table
+
+**BQ Costs**
+- 2 types of pricing
+    - On demand pricing is at 5 usd per 1TB of data processed
+    - Flat rate pricing, which is based on the number of pre requested slots at 100 slots for 2000usd/ month
 
 
+**Table Partitioning**
 
+![Table Partition](/ss/w3/Screenshot%202025-02-09%20225429.png)
 
+- Partition table is divided into partitions, which is this case the raw data on the left side is partitioned based on the ```creation_date``` column, which makes it easier to manage & query the data.
 
+- By dividing the large data into smaller chunks of partition based on the column that we desired, performance can be improved as well as its control costs by reducing the byte numbers read when querying the data.
 
-## 3.1.2 - Partioning and Clustering
+**Clustering**
+
+![Clustering](/ss/w3/Screenshot%202025-02-09%20230522.png)
+
+- Clustering is another method where we want to further optimising the performance the query & reducing the costs by organizing the data in a table based on the values of the column names.
+
+- In this case, clustering is sorting the data based on the ```tags``` column
+- note that clustering can work on top of the partitions
+
+## 3.1.2 - Partitioning and Clustering
+
+**Partition**
+- When partition, these are the options when creating a partitioned table,
+- Time unit column,
+- Ingestion time,
+- Integer range partition
 
 ## 3.2.1 - BigQuery Best Practices
 
