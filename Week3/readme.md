@@ -41,6 +41,13 @@
 - Usually when the data size grows, we need to expand the machine's storage & compute capabilities
 - BQ helps this with separating the compute engine & analysing data on a separate storage platform & is highly advantageous in terms of cost.
 
+**BigQuery Interface**
+
+![BQ Interface](ss/w3/Screenshot 2025-02-09 223759.png)
+
+
+
+
 
 
 
