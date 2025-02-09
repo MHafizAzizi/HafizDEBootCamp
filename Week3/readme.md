@@ -43,8 +43,7 @@
 
 **BigQuery Interface**
 
-![BQ Interface](ss/w3/Screenshot 2025-02-09 223759.png)
-
+![BQ Interface](/ss/w3/Screenshot%202025-02-09%20223759.png)
 
 
 
