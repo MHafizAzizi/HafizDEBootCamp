@@ -1,5 +1,6 @@
 # Ignore specific directory
 Week1/ny_taxi_postgres_data/
+ss/w3/
 
 # Ignore all `.log` files
 *.log
@@ -15,5 +16,5 @@ node_modules/
 
 *.json
 
-ss/
-ss/w3/
+
+

@@ -76,7 +76,28 @@
 - When partition, these are the options when creating a partitioned table,
 - Time unit column,
 - Ingestion time,
+    - When choosing Time Unit or Ingestion Time, can pick between daily (default), hourly, monthly or yearly
 - Integer range partition
+- In BQ, partitions are limited to 4000 partitions created, thus when using hourly partitions, expiration partitioning strategy are generally advisable
+- But when using monthly or yearly partitions, usually the amount of data is small, but can span across various ranges
+
+**BQ Clustering**
+- When doing clustering, order of the columns is important as it determines the sort order of the data
+    - E.g. when clustering on columns a,b & c, the data will be sorted on column a first followed by column b & c.
+- Typically enhances the filter & aggregate queries, especially when applied to the clustered columns.
+- But for smaller data size (e.g. < 1 gb), partitioning & clustering dont improve any noticable query performance.
+- In fact, can introduce significant costs due to the metadata costs & maintenance associated with partitioning & clustering tables.
+- Can specify up to 4 columns, must be unique & at the top level.
+- Can have the option of select from various types for the clustering columns,
+    - DATE
+    - BOOL
+    - GEOGRAPHY
+    - INT64
+    - NUMERIC
+    - BIGNUMERIC
+    - STRING
+    - TIMESTAMP
+    - DATETIME
 
 ## 3.2.1 - BigQuery Best Practices
 
