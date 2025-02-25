@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: staging
+    database: dezoom-449006
+    schema: dezoom_449006_dataset
+
+    tables:
+      - name: green_tripdata
+      - name: yellow_tripdata
